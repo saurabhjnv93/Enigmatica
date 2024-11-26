@@ -28,6 +28,8 @@ class PDFTextProcessor:
         - Cleaned text as a string.
         """
         unwanted_patterns = [
+            r"http\S+",                  # Remove links
+            r"www\.\S+",                 # Remove links starting with www
             r"\.\.\.+\s*\d+",            # Lines with ellipses followed by numbers
             r"^\d+\.\d+\s",              # Lines starting with decimal numbers
             r"\b\d+\b",                  # Lines with isolated numbers
@@ -60,7 +62,6 @@ class PDFTextProcessor:
         if len(lines) > 1 and re.match(unwanted_headers, lines[1], re.IGNORECASE):
             return True
         return False
-
     def extract_text(self):
         """
         Extract and clean text from the PDF, saving it to a file.
@@ -73,7 +74,13 @@ class PDFTextProcessor:
 
         for page_num in range(pdf_document.page_count):
             page = pdf_document[page_num]
-            page_text = page.get_text()
+            page_text = page.get_text("text")  # Extract only text, ignoring images.
+
+            # Ensure no image metadata or placeholders are included
+            for img in page.get_images(full=True):
+                img_ref = img[0]  # Image XREF
+                img_placeholder = f"Image-{img_ref}"
+                page_text = page_text.replace(img_placeholder, "")  # Remove image refs
 
             if self.is_page_unwanted(page_text):
                 continue
@@ -86,6 +93,7 @@ class PDFTextProcessor:
 
         pdf_document.close()
         print(f"Text extraction completed. Saved to {self.output_txt_path}")
+
 
     def clean_text_file(self):
         """

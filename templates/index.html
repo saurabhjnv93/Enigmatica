@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot with Search, Summary, and Feedback</title>
+    <link rel="stylesheet" href="../static/css/Style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Chatbot Assistant</h1>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <form action="/search_query" method="post">
+            <h2>Ask a Question</h2>
+            <input type="text" id="searchQuery" name="question" placeholder="Ask your question, e.g., 'What is ML?'" />
+            <button id="searchBtn">Search</button>
+        </form>
+        </div>
+
+       
+        <!-- Summary Section -->
+        <div class="summary-section">
+            <button id="summaryBtn">Summarize with Gemini</button>
+            <div id="summaryContainer">
+                {{ansHtml}}
+                <!-- Summary will be displayed here -->
+            </div>
+        </div>
+
+        <!-- Feedback Section -->
+        <div class="feedback-section">
+            <h2>Give Your Feedback</h2>
+            <p>Rate your experience with the chatbot:</p>
+            <div class="stars">
+                <span class="star" data-value="1">★</span>
+                <span class="star" data-value="2">★</span>
+                <span class="star" data-value="3">★</span>
+                <span class="star" data-value="4">★</span>
+                <span class="star" data-value="5">★</span>
+            </div>
+            <p id="feedbackMessage" class="feedback-message"></p>
+        </div>
+    </div>
+
+    <!-- JavaScript Section -->
+    <!-- <script>
+        // Process PDF
+        document.getElementById("processPdfBtn").addEventListener("click", function () {
+            fetch("/process_pdf", { method: "POST" })
+                .then(response => response.json())
+                .then(data => {
+                    const processMessage = document.getElementById("processMessage");
+                    processMessage.textContent = data.message || "PDF processed successfully.";
+                })
+                .catch(err => {
+                    const processMessage = document.getElementById("processMessage");
+                    processMessage.textContent = "Error processing PDF. Please try again.";
+                });
+        });
+
+        // Search Query
+        document.getElementById("searchBtn").addEventListener("click", function () {
+            const query = document.getElementById("searchQuery").value;
+
+            fetch("/get_answer", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ question: query })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultsContainer = document.getElementById("resultContainer");
+                resultsContainer.innerHTML = "<h3>Search Results</h3>"; // Clear previous results
+
+                if (data.matches && data.matches.length > 0) {
+                    data.matches.forEach(match => {
+                        const paragraph = document.createElement("p");
+                        paragraph.textContent = `${match.paragraph} (Similarity: ${match.similarity.toFixed(2)})`;
+                        resultsContainer.appendChild(paragraph);
+                    });
+                } else {
+                    const noResults = document.createElement("p");
+                    noResults.textContent = "No matches found.";
+                    resultsContainer.appendChild(noResults);
+                }
+            })
+            .catch(err => {
+                const resultsContainer = document.getElementById("resultContainer");
+                resultsContainer.innerHTML = "<p>Error fetching results. Please try again.</p>";
+            });
+        });
+
+        // Feedback (Optional)
+        const stars = document.querySelectorAll(".star");
+        stars.forEach(star => {
+            star.addEventListener("click", function () {
+                const rating = this.dataset.value;
+                const feedbackMessage = document.getElementById("feedbackMessage");
+                feedbackMessage.textContent = `You rated this ${rating} star(s). Thank you!`;
+            });
+        });
+    </script> -->
+</body>
+</html>

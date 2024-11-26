@@ -56,7 +56,7 @@ class AnsweringClass:
             # Get the top N matches
             top_indices = np.argsort(similarities[0])[::-1][:top_n]
             top_matches = [
-                (df.iloc[i][text_column].replace("\\n", " "), similarities[0][i])
+                (df.iloc[i][text_column].replace("\n", " "), similarities[0][i])
                 for i in top_indices
             ]
 

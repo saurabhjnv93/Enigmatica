@@ -5110,7 +5110,6 @@ On the practical side, efﬁciency gains in propositional solvers have been mark
 998,"Given
 ables. Two crucial contributions were the watched literal indexing technique of Zhang and
 ularly; most of the winning entries have either been descendants of CHAFF or have used the
-implementation available at http://minisat.se that is designed to be easily modiﬁed
 Local search algorithms for satisﬁability were tried by various authors throughout the
 1980s; all of the algorithms were based on the idea of minimizing the number of unsatisﬁed
 it was capable of solving a wide range of very hard problems very quickly."
@@ -16152,9 +16151,9 @@ information retrieval (henceforth IR) system can be characterized by
 a paragraph, a page, or a multipage text."
 3086,"The query language can be just a list of words, such as [AI book]; or it can specify
 a phrase of words that must be adjacent, as in [“AI book”]; it can contain Boolean
-book] or [AI book site:www.aaai.org]. for the particular information need expressed in the query. The earliest IR systems worked on a Boolean keyword model."
-3087,"Each word in the document
-document and false if it does not. So the feature “retrieval” is true for the current chapter
+for the particular information need expressed in the query. The earliest IR systems worked on a Boolean keyword model. Each word in the document
+document and false if it does not."
+3087,"So the feature “retrieval” is true for the current chapter
 distinguish the query [“two words”] from [two words].Chapter
 Natural Language Processing
 features. A document is relevant only if the expression evaluates to true. For example, the

@@ -1,0 +1,116 @@
+/* General Reset */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+.container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #e6e6f0;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.search-section {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+input[type="text"] {
+    width: 70%;
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    outline: none;
+    transition: border 0.3s;
+}
+
+input[type="text"]:focus {
+    border-color: #0078D7;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 1em;
+    margin-left: 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: #0078D7;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #005bb5;
+}
+
+.result-section, .summary-section {
+    margin-top: 20px;
+    text-align: left;
+}
+
+.result-section #resultContainer, .summary-section #summaryContainer {
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    min-height: 50px;
+    overflow: auto;
+}
+
+.result-section #resultContainer {
+    height: 150px;
+}
+
+.summary-section #summaryContainer {
+    height: 200px;
+}
+
+.feedback-section {
+    margin-top: 30px;
+    text-align: center;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+}
+
+.feedback-section h2 {
+    margin-bottom: 10px;
+    color: #0078D7;
+}
+
+.stars {
+    display: inline-block;
+}
+
+.stars .star {
+    font-size: 2em;
+    color: #ccc;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.stars .star:hover,
+.stars .star.selected {
+    color: #FFD700;
+}
+
+.feedback-message {
+    margin-top: 10px;
+    font-style: italic;
+    color: #0078D7;
+}
