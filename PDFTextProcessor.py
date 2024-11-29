@@ -55,11 +55,18 @@ class PDFTextProcessor:
         Returns:
         - True if the page is unwanted, False otherwise.
         """
+        page_text = page_text.lower()
         lines = page_text.splitlines()
-        unwanted_headers = r"^(Contents|Index|Bibliography|Exercises)"
+        if len(lines)<20:
+            return True
+        unwanted_headers = r"^(contents|index|bibliography|exercises|preface|about the authors|acknowledgements|table of contents|notations)"
         if len(lines) > 0 and re.match(unwanted_headers, lines[0], re.IGNORECASE):
             return True
         if len(lines) > 1 and re.match(unwanted_headers, lines[1], re.IGNORECASE):
+            return True
+        if len(lines) > 0 and re.match(unwanted_headers, lines[-1], re.IGNORECASE):
+            return True
+        if len(lines) > 1 and re.match(unwanted_headers, lines[-1], re.IGNORECASE):
             return True
         return False
     def extract_text(self):
@@ -134,6 +141,8 @@ class PDFTextProcessor:
         print(f"Text cleaning completed. Saved to {self.cleaned_txt_path}")
 
     @staticmethod
+    
+
     def process_text_to_dataframe(file_path, output_csv_path=None):
         """
         Process cleaned text into paragraphs and optionally save to a CSV file.
@@ -146,34 +155,52 @@ class PDFTextProcessor:
         - DataFrame containing paragraphs and paragraph numbers.
         """
         try:
+            # Open and read the file
             with open(file_path, 'r', encoding='utf-8') as file:
                 text = file.read()
 
+            # Remove NUL characters from the entire text
+            text = text.replace('\0', '')
+
+            # Define the sentence splitting pattern
             sentence_pattern = r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?|!)\s+'
             sentences = re.split(sentence_pattern, text)
+
             paragraphs = []
             current_para = []
 
             for sentence in sentences:
-                sentence = sentence.strip()
+                # Remove NUL characters from each sentence (defensive programming)
+                sentence = sentence.strip().replace('\0', '')
+
+                # Add the sentence to the current paragraph if it meets the length condition
                 if len(sentence) > 10:
                     current_para.append(sentence)
+
+                    # When the paragraph exceeds the desired length, append it to paragraphs
                     if len(' '.join(current_para)) > 300:
                         paragraphs.append(' '.join(current_para))
                         current_para = []
 
+            # Add any remaining sentences to the final paragraph
             if current_para:
                 paragraphs.append(' '.join(current_para))
 
+            # Create a DataFrame from the paragraphs
             df = pd.DataFrame(paragraphs, columns=['paragraph'])
             df['paragraph_number'] = range(1, len(df) + 1)
             df = df[['paragraph_number', 'paragraph']]
 
+            # Remove any rows with NUL characters, just in case
+            df['paragraph'] = df['paragraph'].str.replace('\0', '', regex=False)
+
+            # Save to CSV if an output path is provided
             if output_csv_path:
                 df.to_csv(output_csv_path, index=False)
                 print(f"DataFrame saved to {output_csv_path}")
 
             return df
+
         except Exception as e:
             print(f"An error occurred: {e}")
             return None
