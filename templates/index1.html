@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Machine Learning Chatbot</title>
+  <style>
+    /* General styling */
+    body {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #868a90;
+        font-family: Arial, sans-serif;
+        background: 
+            linear-gradient(rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.274)), /* Adjust transparency here */
+            url("../static/image/img2.png");
+        background-size: cover;
+        background-position: center;
+    }
+    
+
+    .chat-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .chat-box {
+      width: 90%;
+      max-width: 70%;
+      height: 90%;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      background-color: rgb(161, 156, 156);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header {
+      background-color: #000734f5;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 20px;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      background-color: #283c45;
+    }
+
+    .chat-message {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 12px;
+      max-width: 80%;
+    }
+
+    .chat-message.user {
+      background-color: #e0f7fa;
+      align-self: flex-end;
+      margin-left: auto;
+    }
+
+    .chat-message.bot {
+      background-color: #f1f1f1;
+      align-self: flex-start;
+      margin-right: auto;
+    }
+
+    .chat-input {
+      display: flex;
+      min-width: 70%;
+      padding: 10px;
+      border-top: 1px solid #ccc;
+      background-color: #fff;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 10px;
+      
+      padding-right: 500px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .chat-input button {
+      background-color: #3ba640;
+
+      color: white;
+      padding: 10px;
+      padding-right: 50px;
+      padding-left: 50px;
+      border: none;
+      border-radius: 4px;
+      margin-left: 5px;
+      cursor: pointer;
+      font-weight: bolder;
+    }
+
+    .chat-input button:hover {
+      background-color: #8ABFA3;
+
+    }
+
+    .star-rating {
+      display: inline;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .star {
+      font-size: 20px;
+      cursor: pointer;
+      color: #ccc;
+    }
+
+    .star:hover,
+    .star.selected {
+      color: #FFBF61;
+    }
+
+    .review-section {
+      display: none;
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 5px;}
+
+    .user-rev{
+      border-radius: 5px;
+      padding: 5px;
+      background-color: #45775b;
+        color: white;
+        border:1px  solid #45775b ;
+    }
+    .q_class{
+      padding: 0px;
+    }
+    .q_class {
+      width: 90%;
+      display: flex;
+      align-items: center; /* Ensures vertical alignment */
+    }
+  
+    #userInput {
+      flex: 1; /* Makes the input take all the available space */
+      padding: 10px 20px; /* Adds padding (top-bottom: 10px, left-right: 20px) */
+      box-sizing: border-box; /* Ensures padding doesn't overflow the width */
+    }
+  
+    button {
+      margin-left: 10px; /* Optional: Adds some space between the input and button */
+      padding: 10px 20px;
+    }
+    
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-box">
+      <div class="chat-header">
+        <h2>AI & ML Assistant: Empowering Smart Learning Through Intelligent Conversations</h2>
+      </div>
+      <div class="chat-messages" id="chatMessages">
+        <!-- Display the entire conversation -->
+        {% for message in conversation %}
+          <div class="chat-message user">
+            {{ message.user }}
+          </div>
+          <div class="chat-message bot">
+            {{ message.bot }}
+          </div>
+          <!-- Rating Section after each bot message -->
+          <div class="review-section">
+            <form action="/submit_review" method="POST" onsubmit="return handleReviewSubmit(event, this)">
+              <label for="rating">Rate this response:</label>
+              <div class="star-rating">
+                <span class="star" data-star="1">&#9733;</span>
+                <span class="star" data-star="2">&#9733;</span>
+                <span class="star" data-star="3">&#9733;</span>
+                <span class="star" data-star="4">&#9733;</span>
+                <span class="star" data-star="5">&#9733;</span>
+              </div>
+              <input type="hidden" name="rating" value="" />
+              <input type="hidden" name="query" value="{{ message.user }}" />
+              <input type="hidden" name="answer" value="{{ message.bot }}" />
+              <button  class="user-rev" type="submit">Submit Review</button>
+            </form>
+          </div>
+        {% endfor %}
+      </div>
+      <div class="chat-input">
+        <form class="q_class" action="/search_query" method="POST" id="chatForm">
+          <input type="text" id="userInput" name="question" placeholder="What is ML?" required />
+          <button type="submit">Send</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Scroll to the bottom of the chat messages
+    const chatMessages = document.getElementById("chatMessages");
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    // Add event listeners to dynamically loaded star ratings
+    document.addEventListener("click", function (e) {
+      if (e.target.classList.contains("star")) {
+        const star = e.target;
+        const stars = star.closest(".star-rating").querySelectorAll(".star");
+        const ratingInput = star.closest("form").querySelector('input[name="rating"]');
+        const selectedRating = star.getAttribute("data-star");
+
+        stars.forEach((s, index) => {
+          if (index < selectedRating) {
+            s.classList.add("selected");
+          } else {
+            s.classList.remove("selected");
+          }
+        });
+
+        ratingInput.value = selectedRating;
+      }
+    });
+
+    // Validate rating and handle review submission
+    function handleReviewSubmit(event, form) {
+      event.preventDefault(); // Prevent default form submission
+
+      const ratingInput = form.querySelector('input[name="rating"]');
+      if (!ratingInput.value) {
+        alert("Please select a rating before submitting.");
+        return false;
+      }
+
+      // Submit form data using fetch
+      const formData = new FormData(form);
+      fetch(form.action, {
+        method: form.method,
+        body: formData,
+      })
+        .then((response) => {
+          if (response.ok) {
+            // Hide the review form after successful submission
+            form.closest(".review-section").style.display = "none";
+          } else {
+            alert("Failed to submit the review. Please try again.");
+          }
+        })
+        .catch(() => {
+          alert("Error submitting the review. Please check your connection.");
+        });
+
+      return false;
+    }
+
+    // Automatically show the review section for the last message
+    const reviewSections = document.querySelectorAll(".review-section");
+    if (reviewSections.length > 0) {
+      reviewSections[reviewSections.length - 1].style.display = "inline-block";
+    }
+  </script>
+</body>
+</html>

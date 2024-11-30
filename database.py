@@ -87,7 +87,7 @@ class database():
         except Exception as e:
             print(f"Error creating table or inserting data: {e}")
 
-    def fetch_data(self, lst):
+    def fetch_data(self, lst,top_match):
         """
         Fetch data from the 'AI_ML_Data' table and return it as a pandas DataFrame.
 
@@ -104,12 +104,12 @@ class database():
                 return None  # If connection fails, return None
 
             # Assuming `lst` is a Python list like [3, 1, 2]
-            select_query = """
+            select_query = f"""
                 SELECT paragraph, 
                     1 - (embedding <=> %s::VECTOR) AS cosine_similarity
                 FROM AI_ML_Data
                 ORDER BY cosine_similarity DESC
-                LIMIT 5;
+                LIMIT {top_match};
             """
 
             # Convert Python list to a PostgreSQL-compatible array string
